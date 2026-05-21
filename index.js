@@ -17,8 +17,8 @@ app.use(
   }),
 );
 app.use(cors());
-app.use("/api", api)
-app.use(errorHandler)
+app.use("/api", api);
+app.use(errorHandler);
 
 mongoose.connection.once("open", () => {
   app.listen(PORT, () => {
@@ -27,6 +27,18 @@ mongoose.connection.once("open", () => {
   });
 });
 
-mongooseConnect()
+mongoose.connection.on("error", (err) => {
+  console.error(
+    "Mongoose detectó un error en la conexión activa:",
+    err.message,
+  );
+});
 
-export default app
+mongoose.connection.on("disconnected", () => {
+  console.warn(
+    "Mongoose se ha desconectado. Intentando reconectar automáticamente...",
+  );
+});
+
+mongooseConnect();
+export default app;
